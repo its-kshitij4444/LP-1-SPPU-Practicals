@@ -8,8 +8,6 @@ Welcome to the **Laboratory-Practice 1 Codes** repository! This repository conta
 - [IoT Projects](#iot-projects)
 - [Installation](#installation)
 - [Usage](#usage)
-- [Contributing](#contributing)
-- [License](#license)
 
 ## Overview
 This repository showcases practical implementations and experiments conducted in the SPOS and IoT subjects. The SPOS practicals are implemented using Python, while the IoT projects utilize Arduino for various applications. 
