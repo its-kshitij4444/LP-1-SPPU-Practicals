@@ -38,4 +38,5 @@ For the IoT projects, you will need the following:
 ## Usage
 1. Clone this repository to your local machine:
    ```bash
-   git clone https://github.com/yourusername/Laboratory-Practice-1.git
+   git clone https://github.com/yourusername/LP-1-SPPU-Practicals.git
+
