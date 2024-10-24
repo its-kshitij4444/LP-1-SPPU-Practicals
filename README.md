@@ -23,7 +23,7 @@ Each practical code is organized in its respective directory.
 
 ## IoT Projects
 The IoT section features Arduino-based projects that demonstrate the principles of IoT applications. Includes
-- **IR Sensor (IOT8)**: An Arduino project that changes LED upon detection of objects.
+- **IR Sensor (IOT8)**: An Arduino project that changes LED lighting upon detection of nearby objects.
   Watch the video to understand IR Sensors : https://youtu.be/tUTr58fq308?si=fcy6GQxEB7NrwUPN
 - **Temperature and Humidity Monitoring (IOT9)**: An Arduino project that measures temperature and humidity levels using sensors and displays the data.
   Watch the video to understand Temperature and Humidity monitoring : https://youtu.be/ryri3CRzh8A?si=2mdS-G1WBzHft5r-
