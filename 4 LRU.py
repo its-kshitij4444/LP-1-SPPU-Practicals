@@ -33,8 +33,8 @@ class LRU:
 
 
 if __name__ == "__main__":
-    capacity = int(input("Enter capacity of page frame: "))
-    pages = list(map(int, input("Enter values (space separated): ").split()))
+    capacity = int(input("Enter capacity of page frame: ")) #3
+    pages = list(map(int, input("Enter values (space separated): ").split())) # 7 0 1 2 0 3 0 4
 
     lru = LRU()
     lru.lru_implementation(pages, capacity)
