@@ -8,66 +8,63 @@ mntfile = os.path.join('.', '2a macro pass 1', 'MNT.txt')
 
 # Read input files
 with open(icfile, "r") as ic, open(mntfile, "r") as mnt, open(mdtfile, "r") as mdt:
-    i = ic.readlines()
-    n = mnt.readlines()
-    m = mdt.readlines()
+    ic_lines = ic.readlines()
+    mnt_lines = mnt.readlines()
+    mdt_lines = mdt.readlines()
 
 # Open output file
-with open(opfile, "w") as f:
+with open(opfile, "w") as output:
     # Iterate over each line in the intermediate code (IC)
-    for line in i:
+    for line in ic_lines:
         flag = 0
         temp = str(line).strip().split()
         
         # Check if the current line matches any macro name in the MNT
-        for mnt_line in n:
+        for mnt_line in mnt_lines:
             t = str(mnt_line).strip().split()
-            if t[0] == temp[0]:
+            if t[0] == temp[0]:  # Macro call found
                 flag = 1
-                mdpt = int(t[1])
+                mdpt = int(t[1])  # Starting index for MDT expansion
                 break
         
         if flag == 1:
             # Parse arguments from IC line
             ala = str(temp[1]).split(",") if len(temp) > 1 else []
-            flag += 1
             
-        if flag > 1:
             # Collect MDT lines corresponding to the macro definition
-            lis = []
-            for line_idx in range(mdpt, len(m)):
-                st = str(m[line_idx]).strip()
+            macro_body = []
+            for line_idx in range(mdpt, len(mdt_lines)):
+                st = str(mdt_lines[line_idx]).strip()
                 if st == "MEND":
                     break
-                lis.append(st)
+                macro_body.append(st)
             
-            # Parse the macro definition arguments from MDT
-            ala2 = []
-            for item_idx, item in enumerate(lis):
-                tmp = str(item).split()
-                if item_idx == 0:
-                    ala2 = str(tmp[1]).split(",")
-                
-                if item_idx > 0:
-                    # Write the macro instruction name
-                    f.write(tmp[0] + " ")
-                
-                # Substitute parameters with actual arguments
-                tmp_args = str(tmp[1]).split(",")
-                buffer = ""
-                
-                for k in tmp_args:
-                    for ii, arg in enumerate(ala2):
-                        if k == f"#{ii}":
-                            # Substitute arguments, handle default values
-                            if len(ala) <= ii:
-                                default_value = ala2[ii].split("=")[1] if "=" in ala2[ii] else ""
-                                buffer += default_value + ","
-                            else:
-                                buffer += ala[ii] + ","
-                
-                if item_idx > 0:
-                    f.write(buffer.rstrip(",") + "\n")
-        elif flag == 0:
-            # Write non-macro lines directly
-            f.write(line)
+            # Parse the macro definition arguments from MDT's first line
+            if macro_body:
+                mdt_args = macro_body[0].split()[1].split(",")
+
+            # Process and expand each line in the macro definition
+            for item in macro_body:
+                instr_parts = item.split()
+                if instr_parts[0] != "MEND":
+                    # Replace parameters in the instruction
+                    instruction = instr_parts[0]
+                    operands = instr_parts[1].split(",") if len(instr_parts) > 1 else []
+                    expanded_operands = []
+                    
+                    for op in operands:
+                        if op.startswith("#"):
+                            idx = int(op[1:])  # Index of the parameter
+                            if idx < len(ala):
+                                # Substitute with actual argument or default value
+                                expanded_operands.append(ala[idx])
+                            elif "=" in mdt_args[idx]:  # Default value in MDT
+                                expanded_operands.append(mdt_args[idx].split("=")[1])
+                        else:
+                            expanded_operands.append(op)
+                    
+                    # Write the expanded instruction line to the output file
+                    output.write(f"{instruction} {','.join(expanded_operands)}\n")
+        else:
+            # Write non-macro lines directly to the output
+            output.write(line)
