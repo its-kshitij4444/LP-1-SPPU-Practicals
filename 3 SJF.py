@@ -13,19 +13,21 @@ def preemptive_sjf(processes):
     finish_times = [-1] * n
     
     while completed < n:
-        # Find the process with the shortest remaining time
+        # Find the process with the shortest remaining time that is not yet completed
         min_time = float('inf')
         idx = -1
         
         for i in range(n):
-            if processes[i][1] <= time and burst_remaining[i] < min_time:
+            if processes[i][1] <= time and burst_remaining[i] > 0 and burst_remaining[i] < min_time:
                 min_time = burst_remaining[i]
                 idx = i
         
         if idx == -1:
-            # No process is available to run; jump to the next arrival time
-            next_arrival = min(p[1] for p in processes if p[1] > time)
-            time = next_arrival
+            # No process is available to run; jump to the next arrival time if exists
+            available_arrivals = [p[1] for p in processes if p[1] > time and burst_remaining[processes.index(p)] > 0]
+            if not available_arrivals:
+                break
+            time = min(available_arrivals)
             continue
         
         # Update start time for the process if it's the first time it's being run
@@ -41,12 +43,18 @@ def preemptive_sjf(processes):
             finish_times[idx] = time
             completed += 1
     
+    # Calculate Waiting Time and Turnaround Time
+    waiting_times = [finish_times[i] - processes[i][1] - processes[i][2] for i in range(n)]
+    turnaround_times = [finish_times[i] - processes[i][1] for i in range(n)]
+    
     # Create DataFrame for better visualization
     data = {
         'Process': [p[0] for p in processes],
         'Burst Time': [p[2] for p in processes],
         'Start Time': start_times,
-        'Finish Time': finish_times
+        'Finish Time': finish_times,
+        'Waiting Time': waiting_times,
+        'Turnaround Time': turnaround_times
     }
     
     df = pd.DataFrame(data)
